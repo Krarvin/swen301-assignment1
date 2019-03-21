@@ -7,6 +7,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.Random;
+import java.util.*;
 
 /**
  * A student managers providing basic CRUD operations for instances of Student, and a read operation for instanbces of Degree.
@@ -97,7 +99,24 @@ public class StudentManager {
      * There is no special handling required to enforce this, just ensure that tests only use values with < 10 characters.
      * @param student
      */
-    public static void update(Student student) {}
+    public static void update(Student student) {
+        try {
+            Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
+            Statement stmnt = con.createStatement();
+            String id = student.getId();
+            String name = student.getName();
+            String first_name = student.getFirstName();
+            Degree degree = student.getDegree();
+            String degreeName = degree.getName();
+            String sql = "UPDATE FROM STUDENT SET name = \'"+name+"\', firstName = \'"+first_name+"\', degree = \'"+degreeName+"\' WHERE ID = \'"+id+"\'";
+            if(name.length()<11 && first_name.length()<11){
+                stmnt.executeQuery(sql);
+            }
+            else{System.out.println("name and first name cannot be longer than 10 characters");}
+        }catch(Exception x) {
+            x.printStackTrace();
+        }
+    }
 
 
     /**
@@ -111,6 +130,18 @@ public class StudentManager {
      * @return a freshly created student instance
      */
     public static Student createStudent(String name,String firstName,Degree degree) {
+        try {
+            Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
+            Statement stmnt = con.createStatement();
+            Random rand = new Random();
+            String sql = "SELECT MAX(ID) FROM STUDENTS";
+            ResultSet rs = stmnt.executeQuery(sql);
+            int newid = rs.getInt(0)+1;
+            String stringid = Integer.toString(newid);
+            return new Student(stringid, name, firstName, degree);
+        }catch(Exception x){
+            x.printStackTrace();
+        }
         return null;
     }
 
@@ -119,8 +150,10 @@ public class StudentManager {
      * @return
      */
     public static Collection<String> getAllStudentIds() {
+
         return null;
     }
+
 
     /**
      * Get all degree ids currently being used in the database.
