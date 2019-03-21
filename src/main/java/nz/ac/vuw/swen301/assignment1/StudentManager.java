@@ -34,10 +34,9 @@ public class StudentManager {
         try {
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
             Statement stmnt = con.createStatement();
-            String sql = "SELECT * FROM STUDENTS WHERE ID=\'id\'";
+            String sql = "SELECT * FROM STUDENTS WHERE ID=\'"+id+"\'";
             ResultSet rs = stmnt.executeQuery(sql);
             while (rs.next()) {
-                String _id = rs.getString("id");
                 String name = rs.getString("name");
                 String firstName = rs.getString("first_name");
                 return new Student(id,name,firstName,null);
@@ -57,6 +56,19 @@ public class StudentManager {
      * @return
      */
     public static Degree readDegree(String id) {
+        try {
+            Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
+            Statement stmnt = con.createStatement();
+            String sql ="SELECT * FROM DEGREE WHERE ID =\'"+id+"\'";
+            ResultSet rs = stmnt.executeQuery(sql);
+            while(rs.next()){
+                String name = rs.getString("name");
+                return new Degree(id,name);
+
+            }
+        }catch(Exception x){
+            x.printStackTrace();
+        }
         return null;
     }
 
@@ -65,7 +77,17 @@ public class StudentManager {
      * I.e., after this, trying to read a student with this id will return null.
      * @param student
      */
-    public static void delete(Student student) {}
+    public static void delete(Student student) {
+        try {
+            Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
+            Statement stmnt = con.createStatement();
+            String id = student.getId();
+            String sql ="DELETE FROM STUDENT WHERE ID =\'"+id+"\'";
+            stmnt.executeQuery(sql);
+        }catch(Exception x) {
+            x.printStackTrace();
+        }
+    }
 
     /**
      * Update (synchronize) a student instance with the database.
