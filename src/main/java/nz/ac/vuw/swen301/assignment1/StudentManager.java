@@ -133,12 +133,17 @@ public class StudentManager {
         try {
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
             Statement stmnt = con.createStatement();
-            Random rand = new Random();
-            String sql = "SELECT MAX(ID) FROM STUDENTS";
-            ResultSet rs = stmnt.executeQuery(sql);
-            int newid = rs.getInt(0)+1;
-            String stringid = Integer.toString(newid);
-            return new Student(stringid, name, firstName, degree);
+            Collection<String> studentIDList = getAllStudentIds();
+            int id = 0;
+            for(int i = 0; i<studentIDList.size();i++){
+                if(id != i){break;}
+                else{id++;}
+            }
+            if(studentIDList.size() < 10000){
+                String sql = "INSERT INTO Students VALUES(\'"+id+"\', \'"+name+"\', \'"+firstName+"\',\'"+degree.getName()+"\')";
+            }
+            String Stringid = Integer.toString(id);
+            return new Student(Stringid, name, firstName, degree);
         }catch(Exception x){
             x.printStackTrace();
         }
@@ -150,7 +155,21 @@ public class StudentManager {
      * @return
      */
     public static Collection<String> getAllStudentIds() {
-
+        try {
+            List<String> studentIDList = new ArrayList<String>();
+            Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
+            Statement stmnt = con.createStatement();
+            String sql = "SELECT id FROM STUDENTS";
+            ResultSet rs = stmnt.executeQuery(sql);
+            int count = 0;
+            while(rs.next()){
+                studentIDList.add(rs.getString(count));
+                count++;
+            }
+            return studentIDList;
+        }catch(Exception x){
+            x.printStackTrace();
+        }
         return null;
     }
 
@@ -160,6 +179,21 @@ public class StudentManager {
      * @return
      */
     public static Iterable<String> getAllDegreeIds() {
+        try{
+            List<String> degreeIDList = new ArrayList<String>();
+            Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
+            Statement stmnt = con.createStatement();
+            String sql = "SELECT id FROM DEGREE";
+            ResultSet rs = stmnt.executeQuery(sql);
+            int count = 0;
+            while(rs.next()){
+                degreeIDList.add(rs.getString(count));
+                count++;
+            }
+            return degreeIDList;
+        }catch(Exception x){
+            x.printStackTrace();
+        }
         return null;
     }
 
