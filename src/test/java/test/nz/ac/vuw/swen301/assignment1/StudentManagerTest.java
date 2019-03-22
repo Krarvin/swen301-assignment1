@@ -24,4 +24,10 @@ public class StudentManagerTest {
         // THIS WILL INITIALLY FAIL
         assertNotNull(student);
     }
+
+    @Test
+    public void readStudentTest1() throws Exception{
+        Student student = new StudentManager().readStudent("id42");
+        assert(student.getId() == "id42");
+    }
 }
