@@ -76,7 +76,6 @@ public class StudentManagerTest {
         Student student = StudentManager.createStudent("hoong","kevin", degree);
         assertNotNull(student);
         String id = student.getId();
-        System.out.println(StudentManager.readStudent(id).getFirstName());
         assert(StudentManager.readStudent(id).getName().equals("hoong"));
         assert(StudentManager.readStudent(id).getFirstName().equals("kevin"));
         assert(StudentManager.readStudent(id).getId().equals("id100"));
