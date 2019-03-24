@@ -1,5 +1,8 @@
 package nz.ac.vuw.swen301.assignment1.cli;
 
+import nz.ac.vuw.swen301.assignment1.Student;
+import nz.ac.vuw.swen301.assignment1.StudentManager;
+
 public class FindStudentDetails {
 
     // THE FOLLOWING METHOD MUST IMPLEMENTED

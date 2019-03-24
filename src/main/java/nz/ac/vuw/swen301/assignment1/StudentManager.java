@@ -41,7 +41,11 @@ public class StudentManager {
             while (rs.next()) {
                 String name = rs.getString("name");
                 String firstName = rs.getString("first_name");
-                return new Student(id,name,firstName,null);
+                String degree = (rs.getString("degree"));
+                String degreeName = (readDegree(degree).getName());
+                stmnt.closeOnCompletion();
+                con.close();
+                return new Student(id,name,firstName,new Degree(degree, degreeName));
             }
         }
         catch (Exception x) {
@@ -61,13 +65,16 @@ public class StudentManager {
         try {
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
             Statement stmnt = con.createStatement();
-            String sql ="SELECT * FROM DEGREE WHERE ID =\'"+id+"\'";
+            String sql ="SELECT name FROM DEGREES WHERE ID =\'"+id+"\'";
             ResultSet rs = stmnt.executeQuery(sql);
             while(rs.next()){
                 String name = rs.getString("name");
+                stmnt.close();
+                con.close();
                 return new Degree(id,name);
 
             }
+            return null;
         }catch(Exception x){
             x.printStackTrace();
         }
@@ -84,8 +91,12 @@ public class StudentManager {
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
             Statement stmnt = con.createStatement();
             String id = student.getId();
-            String sql ="DELETE FROM STUDENT WHERE ID =\'"+id+"\'";
-            stmnt.executeQuery(sql);
+            String sql ="DELETE FROM STUDENTS WHERE ID =\'"+id+"\'";
+            System.out.println("test");
+            stmnt.executeUpdate(sql);
+            stmnt.close();
+            con.close();
+            System.out.println("test");
         }catch(Exception x) {
             x.printStackTrace();
         }
@@ -107,10 +118,12 @@ public class StudentManager {
             String name = student.getName();
             String first_name = student.getFirstName();
             Degree degree = student.getDegree();
-            String degreeName = degree.getName();
-            String sql = "UPDATE FROM STUDENT SET name = \'"+name+"\', firstName = \'"+first_name+"\', degree = \'"+degreeName+"\' WHERE ID = \'"+id+"\'";
+            String degreeID = degree.getId();
+            String sql = "UPDATE STUDENTS SET NAME = \'"+name+"\', FIRST_NAME = \'"+first_name+"\', DEGREE = \'"+degreeID+"\' WHERE ID = \'"+id+"\'";
             if(name.length()<11 && first_name.length()<11){
-                stmnt.executeQuery(sql);
+                stmnt.executeUpdate(sql);
+                stmnt.close();
+                con.close();
             }
             else{System.out.println("name and first name cannot be longer than 10 characters");}
         }catch(Exception x) {
@@ -134,15 +147,18 @@ public class StudentManager {
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
             Statement stmnt = con.createStatement();
             Collection<String> studentIDList = getAllStudentIds();
+            System.out.println(studentIDList.size());
             int id = 0;
-            for(int i = 0; i<studentIDList.size();i++){
-                if(id != i){break;}
-                else{id++;}
+            for(int i = 0; i<studentIDList.size() + 1;i++){
+                if(!studentIDList.contains("id" + i)){id = i;}
             }
+            String Stringid = "id" + Integer.toString(id);
             if(studentIDList.size() < 10000){
-                String sql = "INSERT INTO Students VALUES(\'"+id+"\', \'"+name+"\', \'"+firstName+"\',\'"+degree.getName()+"\')";
+                String sql = "INSERT INTO STUDENTS VALUES(\'"+Stringid+"\', \'"+firstName+"\', \'"+name+"\',\'"+degree.getId()+"\')";
+                stmnt.executeUpdate(sql);
+                stmnt.close();
+                con.close();
             }
-            String Stringid = Integer.toString(id);
             return new Student(Stringid, name, firstName, degree);
         }catch(Exception x){
             x.printStackTrace();
@@ -163,9 +179,11 @@ public class StudentManager {
             ResultSet rs = stmnt.executeQuery(sql);
             int count = 0;
             while(rs.next()){
-                studentIDList.add(rs.getString(count));
+                studentIDList.add(rs.getString("id"));
                 count++;
             }
+            stmnt.close();
+            con.close();
             return studentIDList;
         }catch(Exception x){
             x.printStackTrace();
@@ -190,6 +208,8 @@ public class StudentManager {
                 degreeIDList.add(rs.getString(count));
                 count++;
             }
+            stmnt.close();
+            con.close();
             return degreeIDList;
         }catch(Exception x){
             x.printStackTrace();

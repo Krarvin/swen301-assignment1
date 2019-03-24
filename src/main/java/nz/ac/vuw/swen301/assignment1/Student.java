@@ -12,7 +12,7 @@ public class Student {
     private String firstName = null;
     private Degree degree = null;
 
-    Student(String id, String name, String firstName, Degree degree) {
+    public Student(String id, String name, String firstName, Degree degree) {
         this.id = id;
         this.name = name;
         this.firstName = firstName;
