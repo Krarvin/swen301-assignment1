@@ -2,10 +2,7 @@ package nz.ac.vuw.swen301.assignment1;
 
 import nz.ac.vuw.swen301.studentmemdb.StudentDB;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Collection;
 import java.util.Random;
 import java.util.*;
@@ -35,17 +32,18 @@ public class StudentManager {
     public static Student readStudent(String id) {
         try {
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
-            Statement stmnt = con.createStatement();
-            String sql = "SELECT * FROM STUDENTS WHERE ID=\'"+id+"\'";
-            ResultSet rs = stmnt.executeQuery(sql);
+            String sql = "SELECT * FROM STUDENTS WHERE ID = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1,id);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String name = rs.getString("name");
                 String firstName = rs.getString("first_name");
                 String degree = (rs.getString("degree"));
                 String degreeName = (readDegree(degree).getName());
-                stmnt.closeOnCompletion();
+                ps.closeOnCompletion();
                 con.close();
-                return new Student(id,name,firstName,new Degree(degree, degreeName));
+                return new Student(id,name,firstName,new Degree(degree,degreeName));
             }
         }
         catch (Exception x) {
@@ -64,12 +62,13 @@ public class StudentManager {
     public static Degree readDegree(String id) {
         try {
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
-            Statement stmnt = con.createStatement();
-            String sql ="SELECT name FROM DEGREES WHERE ID =\'"+id+"\'";
-            ResultSet rs = stmnt.executeQuery(sql);
+            String sql ="SELECT name FROM DEGREES WHERE ID = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 String name = rs.getString("name");
-                stmnt.close();
+                ps.close();
                 con.close();
                 return new Degree(id,name);
 
@@ -89,14 +88,13 @@ public class StudentManager {
     public static void delete(Student student) {
         try {
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
-            Statement stmnt = con.createStatement();
             String id = student.getId();
-            String sql ="DELETE FROM STUDENTS WHERE ID =\'"+id+"\'";
-            System.out.println("test");
-            stmnt.executeUpdate(sql);
-            stmnt.close();
+            String sql ="DELETE FROM STUDENTS WHERE ID = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1,id);
+            ps.executeUpdate();
+            ps.close();
             con.close();
-            System.out.println("test");
         }catch(Exception x) {
             x.printStackTrace();
         }
@@ -113,16 +111,20 @@ public class StudentManager {
     public static void update(Student student) {
         try {
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
-            Statement stmnt = con.createStatement();
+            String sql = "UPDATE STUDENTS SET NAME = ?, FIRST_NAME = ?, DEGREE = ? WHERE ID = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
             String id = student.getId();
             String name = student.getName();
             String first_name = student.getFirstName();
             Degree degree = student.getDegree();
             String degreeID = degree.getId();
-            String sql = "UPDATE STUDENTS SET NAME = \'"+name+"\', FIRST_NAME = \'"+first_name+"\', DEGREE = \'"+degreeID+"\' WHERE ID = \'"+id+"\'";
+            ps.setString(1,name);
+            ps.setString(2,first_name);
+            ps.setString(3,degreeID);
+            ps.setString(4, id);
             if(name.length()<11 && first_name.length()<11){
-                stmnt.executeUpdate(sql);
-                stmnt.close();
+                ps.executeUpdate();
+                ps.close();
                 con.close();
             }
             else{System.out.println("name and first name cannot be longer than 10 characters");}
@@ -145,18 +147,21 @@ public class StudentManager {
     public static Student createStudent(String name,String firstName,Degree degree) {
         try {
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
-            Statement stmnt = con.createStatement();
+            String sql = "INSERT INTO STUDENTS VALUES(?,?,?,?)";
+            PreparedStatement ps = con.prepareStatement(sql);
             Collection<String> studentIDList = getAllStudentIds();
-            System.out.println(studentIDList.size());
             int id = 0;
             for(int i = 0; i<studentIDList.size() + 1;i++){
                 if(!studentIDList.contains("id" + i)){id = i;}
             }
             String Stringid = "id" + Integer.toString(id);
+            ps.setString(1, Stringid);
+            ps.setString(2, firstName);
+            ps.setString(3, name);
+            ps.setString(4, degree.getId());
             if(studentIDList.size() < 10000){
-                String sql = "INSERT INTO STUDENTS VALUES(\'"+Stringid+"\', \'"+firstName+"\', \'"+name+"\',\'"+degree.getId()+"\')";
-                stmnt.executeUpdate(sql);
-                stmnt.close();
+                ps.executeUpdate();
+                ps.close();
                 con.close();
             }
             return new Student(Stringid, name, firstName, degree);

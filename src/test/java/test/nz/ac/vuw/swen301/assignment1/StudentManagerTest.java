@@ -80,4 +80,24 @@ public class StudentManagerTest {
         assert(StudentManager.readStudent(id).getFirstName().equals("kevin"));
         assert(StudentManager.readStudent(id).getId().equals("id100"));
     }
+
+    @Test
+    public void getStudentIDTest() throws Exception{
+        assert(StudentManager.getAllStudentIds().size() == 9999);
+        Student delete = StudentManager.readStudent("id8");
+        StudentManager.delete(delete);
+        assert(StudentManager.getAllStudentIds().size() == 9998);
+    }
+
+    @Test
+    public void thousandQueryTest() throws Exception{
+        long start = System.currentTimeMillis();
+        for(int i = 0; i<1000; i++) {
+            StudentManager.readStudent("id" + Integer.toString(i));
+        }
+        long end = System.currentTimeMillis();
+        long time = end - start;
+        System.out.println(time/1000);
+        assert(time < 1000);
+    }
 }
