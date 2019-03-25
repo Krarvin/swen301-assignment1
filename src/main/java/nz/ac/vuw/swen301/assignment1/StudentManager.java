@@ -27,7 +27,7 @@ public class StudentManager {
      * If an instance with this id already exists, return the existing instance and do not create a second one.
      * return null if there is no database record with this id.
      * @param id
-     * @return
+     * @return new student
      */
     public static Student readStudent(String id) {
         try {
@@ -57,7 +57,7 @@ public class StudentManager {
      * If an instance with this id already exists, return the existing instance and do not create a second one.
      * return null if there is no database record with this id.
      * @param id
-     * @return
+     * @return Degree
      */
     public static Degree readDegree(String id) {
         try {
@@ -173,7 +173,7 @@ public class StudentManager {
 
     /**
      * Get all student ids currently being used in the database.
-     * @return
+     * @return ArrayList containing strings
      */
     public static Collection<String> getAllStudentIds() {
         try {
@@ -199,7 +199,7 @@ public class StudentManager {
 
     /**
      * Get all degree ids currently being used in the database.
-     * @return
+     * @return all degree Ids
      */
     public static Iterable<String> getAllDegreeIds() {
         try{
