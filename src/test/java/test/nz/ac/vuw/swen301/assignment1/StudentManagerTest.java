@@ -7,9 +7,9 @@ import nz.ac.vuw.swen301.studentmemdb.StudentDB;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import java.util.Iterator;
+
+import static org.junit.Assert.*;
 
 public class StudentManagerTest {
 
@@ -87,6 +87,26 @@ public class StudentManagerTest {
         Student delete = StudentManager.readStudent("id8");
         StudentManager.delete(delete);
         assert(StudentManager.getAllStudentIds().size() == 9998);
+        Student delete2 = StudentManager.readStudent("id9");
+        StudentManager.delete(delete2);
+        assert(StudentManager.getAllStudentIds().size() == 9997);
+    }
+    @Test
+    public void getDegreeIDTest() throws Exception{
+        int count = 0;
+        for(String s : StudentManager.getAllDegreeIds()){
+            count++;
+        }
+        assertEquals(16, count);
+        }
+
+    @Test
+    public void getDegreeIDTest2() throws Exception{
+        int count = 0;
+        for(String s : StudentManager.getAllDegreeIds()){
+            count++;
+        }
+        assertEquals(16, count);
     }
 
     @Test
@@ -97,7 +117,6 @@ public class StudentManagerTest {
         }
         long end = System.currentTimeMillis();
         long time = end - start;
-        System.out.println(time/1000);
         assert(time < 1000);
     }
 }

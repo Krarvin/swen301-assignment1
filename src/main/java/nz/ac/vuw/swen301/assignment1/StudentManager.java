@@ -206,11 +206,11 @@ public class StudentManager {
             List<String> degreeIDList = new ArrayList<String>();
             Connection con = DriverManager.getConnection("jdbc:derby:memory:student_records");
             Statement stmnt = con.createStatement();
-            String sql = "SELECT id FROM DEGREE";
+            String sql = "SELECT id FROM DEGREES";
             ResultSet rs = stmnt.executeQuery(sql);
             int count = 0;
             while(rs.next()){
-                degreeIDList.add(rs.getString(count));
+                degreeIDList.add(rs.getString(1));
                 count++;
             }
             stmnt.close();
