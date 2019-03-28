@@ -13,13 +13,15 @@ public class FindStudentDetails {
      * @param arg
      */
     public static void main (String[] arg) {
-        if(arg.length == 0){
+        if (arg.length == 0) {
             return;
         }
         String id = arg[0];
         Student student = StudentManager.readStudent(id);
-        if(student != null) {
+        if (student != null) {
             System.out.println(student.getId() + " " + student.getFirstName() + " " + student.getName() + " " + student.getDegree().getId() + " " + student.getDegree().getName());
+        } else {
+            System.out.println("student not found");
         }
     }
 }
