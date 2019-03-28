@@ -13,6 +13,9 @@ public class FindStudentDetails {
      * @param arg
      */
     public static void main (String[] arg) {
+        if(arg.length == 0){
+            return;
+        }
         String id = arg[0];
         Student student = StudentManager.readStudent(id);
         if(student != null) {
