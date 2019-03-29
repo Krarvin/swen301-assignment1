@@ -8,7 +8,10 @@ a. After implementing the jdepend maven plugin in the pom.xml we can
     
 b. when we open jdepend-report.xml there is a dependsUpon tag which 
     lists the dependancies our project uses. IntelliJ then has an analyze
-    dependancies tool which I could compare with my jdepends report.
+    dependancies tool which I could compare with my jdepends report. my
+    jdepend report had no cyclic dependencies which means in the project 
+    architecture the top layers only depend on the bottom layers but the bottom
+    layers don't depend on the top layers
     
 c. to generate standalone cli applications in maven we have to go into the
     directory of our mvn project and run it using mvn clean package. This will
